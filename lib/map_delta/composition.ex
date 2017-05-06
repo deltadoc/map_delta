@@ -31,20 +31,12 @@ defmodule MapDelta.Composition do
     [Operation.add(prop, init)]
   end
 
-  defp do_compose([%{add: prop, init: init}, %{change: prop, delta: delta}]) do
+  defp do_compose([%{add: prop, init: init}, %{change: _, delta: delta}]) do
     [Operation.add(prop, PropertyDelta.compose(init, delta))]
   end
 
-  defp do_compose([%{change: prop}, %{add: _, init: init}]) do
-    [Operation.replace(prop, init)]
-  end
-
-  defp do_compose([%{change: _}, %{remove: _} = rem]) do
-    [rem]
-  end
-
-  defp do_compose([%{change: _}, %{replace: _} = rep]) do
-    [rep]
+  defp do_compose([%{replace: prop, init: init}, %{change: _, delta: delta}]) do
+    [Operation.replace(prop, PropertyDelta.compose(init, delta))]
   end
 
   defp do_compose([%{change: prop, delta: delta_a},
@@ -52,35 +44,19 @@ defmodule MapDelta.Composition do
     [Operation.change(prop, PropertyDelta.compose(delta_a, delta_b))]
   end
 
-  defp do_compose([%{remove: prop}, %{add: _, init: init}]) do
+  defp do_compose([%{remove: _} = remove, %{change: _}]) do
+    [remove]
+  end
+
+  defp do_compose([_, %{add: prop, init: init}]) do
     [Operation.replace(prop, init)]
   end
 
-  defp do_compose([%{remove: _}, %{remove: _} = rem_b]) do
-    [rem_b]
+  defp do_compose([_, %{remove: _} = remove]) do
+    [remove]
   end
 
-  defp do_compose([%{remove: _}, %{replace: _} = rep]) do
-    [rep]
-  end
-
-  defp do_compose([%{remove: _} = rem, %{change: _}]) do
-    [rem]
-  end
-
-  defp do_compose([%{replace: prop}, %{add: _, init: init}]) do
-    [Operation.replace(prop, init)]
-  end
-
-  defp do_compose([%{replace: _}, %{remove: _} = rem]) do
-    [rem]
-  end
-
-  defp do_compose([%{replace: _}, %{replace: _} = rep_b]) do
-    [rep_b]
-  end
-
-  defp do_compose([%{replace: prop, init: init}, %{change: _, delta: delta}]) do
-    [Operation.replace(prop, PropertyDelta.compose(init, delta))]
+  defp do_compose([_, %{replace: _} = replace]) do
+    [replace]
   end
 end
