@@ -9,7 +9,16 @@ defmodule MapDelta do
 
   @type t :: %MapDelta{}
 
-  def new(ops \\ []), do: wrap(ops)
+  @type document :: %MapDelta{ops: [Operation.add]}
+
+  def new(ops \\ [])
+  def new([]), do: %MapDelta{}
+  def new(ops) do
+    ops
+    |> Enum.map(&List.wrap/1)
+    |> Enum.map(&wrap/1)
+    |> Enum.reduce(new(), &compose(&2, &1))
+  end
 
   def add(prop, init), do: wrap([Operation.add(prop, init)])
 

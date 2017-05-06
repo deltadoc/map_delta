@@ -1,8 +1,22 @@
 defmodule MapDelta.CompositionTest do
   use ExUnit.Case
+  use EQC.ExUnit
   doctest MapDelta.Composition
 
   alias MapDelta.Operation
+  import MapDelta.Generators
+
+  property "(a + b) + c = a + (b + c)" do
+    forall {doc, delta_a, delta_b} <- {document(), delta(), delta()} do
+      doc_a = MapDelta.compose(doc, delta_a)
+      doc_b = MapDelta.compose(doc_a, delta_b)
+
+      delta_c = MapDelta.compose(delta_a, delta_b)
+      doc_c = MapDelta.compose(doc, delta_c)
+
+      ensure doc_b == doc_c
+    end
+  end
 
   describe "compose add" do
     test "with add" do

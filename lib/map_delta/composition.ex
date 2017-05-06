@@ -12,7 +12,7 @@ defmodule MapDelta.Composition do
     |> Enum.map(&elem(&1, 1))
     |> Enum.map(&do_compose/1)
     |> Enum.concat()
-    |> MapDelta.new()
+    |> wrap_into_delta()
   end
 
   defp do_compose([_] = ops) do
@@ -59,4 +59,6 @@ defmodule MapDelta.Composition do
   defp do_compose([_, %{replace: _} = replace]) do
     [replace]
   end
+
+  defp wrap_into_delta(ops), do: %MapDelta{ops: ops}
 end
