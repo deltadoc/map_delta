@@ -123,6 +123,14 @@ defmodule MapDeltaTest do
       b = MapDelta.change("a", 5)
       assert MapDelta.compose(a, b) == MapDelta.replace("a", 5)
     end
+
+    test "operations on different properties" do
+      a = MapDelta.add("a", 5)
+      b = MapDelta.replace("b", 3)
+      assert MapDelta.compose(a, b) == MapDelta.new([
+        Operation.add("a", 5),
+        Operation.replace("b", 3)])
+    end
   end
 
   defp ops(delta), do: MapDelta.operations(delta)

@@ -20,4 +20,9 @@ defmodule MapDelta.Operation do
   def replace(prop, init), do: %{replace: prop, init: init}
 
   def change(prop, delta), do: %{change: prop, delta: delta}
+
+  def property(%{add: prop}), do: prop
+  def property(%{remove: prop}), do: prop
+  def property(%{replace: prop}), do: prop
+  def property(%{change: prop}), do: prop
 end
