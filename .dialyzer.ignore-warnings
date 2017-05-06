@@ -1,0 +1,12 @@
+Unknown function 'Elixir.MapDelta.PropertyDelta.Atom':'__impl__'/1
+Unknown function 'Elixir.MapDelta.PropertyDelta.BitString':'__impl__'/1
+Unknown function 'Elixir.MapDelta.PropertyDelta.Float':'__impl__'/1
+Unknown function 'Elixir.MapDelta.PropertyDelta.Function':'__impl__'/1
+Unknown function 'Elixir.MapDelta.PropertyDelta.Integer':'__impl__'/1
+Unknown function 'Elixir.MapDelta.PropertyDelta.List':'__impl__'/1
+Unknown function 'Elixir.MapDelta.PropertyDelta.Map':'__impl__'/1
+Unknown function 'Elixir.MapDelta.PropertyDelta.PID':'__impl__'/1
+Unknown function 'Elixir.MapDelta.PropertyDelta.Port':'__impl__'/1
+Unknown function 'Elixir.MapDelta.PropertyDelta.Reference':'__impl__'/1
+Unknown function 'Elixir.MapDelta.PropertyDelta.Tuple':'__impl__'/1
+The specification for 'Elixir.MapDelta.PropertyDelta':'__protocol__'/1 states that the function might also return 'true' but the inferred return is 'Elixir.MapDelta.PropertyDelta' | 'false' | [{'compose',2},...]

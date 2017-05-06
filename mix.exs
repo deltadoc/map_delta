@@ -8,7 +8,12 @@ defmodule MapDelta.Mixfile do
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      deps: deps(),
-     aliases: aliases()]
+     aliases: aliases(),
+     dialyzer: [flags: ~w(-Werror_handling
+                          -Wrace_conditions
+                          -Wunderspecs
+                          -Wunmatched_returns),
+                ignore_warnings: ".dialyzer.ignore-warnings"]]
   end
 
   def application, do: []

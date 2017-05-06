@@ -1,5 +1,6 @@
 defprotocol MapDelta.PropertyDelta do
   @fallback_to_any true
+  @spec compose(any, any) :: any
   def compose(first, second)
 end
 
