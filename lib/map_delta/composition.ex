@@ -3,15 +3,11 @@ defmodule MapDelta.Composition do
   Map deltas composition.
   """
 
-  alias MapDelta.{Operation, PropertyDelta}
+  alias MapDelta.{Operation, Iterator, PropertyDelta}
 
   def compose(%MapDelta{ops: ops_a}, %MapDelta{ops: ops_b}) do
     ops_a
-    |> Kernel.++(ops_b)
-    |> Enum.group_by(&Operation.property/1)
-    |> Enum.map(&elem(&1, 1))
-    |> Enum.map(&do_compose/1)
-    |> Enum.concat()
+    |> Iterator.iterate(ops_b, &do_compose/1)
     |> wrap_into_delta()
   end
 
