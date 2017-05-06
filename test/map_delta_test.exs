@@ -131,6 +131,13 @@ defmodule MapDeltaTest do
         Operation.add("a", 5),
         Operation.replace("b", 3)])
     end
+
+    test "recursively" do
+      a = MapDelta.change("a", MapDelta.remove(".c"))
+      b = MapDelta.change("a", MapDelta.add(".c", 6))
+      assert MapDelta.compose(a, b) ==
+        MapDelta.change("a", MapDelta.replace(".c", 6))
+    end
   end
 
   defp ops(delta), do: MapDelta.operations(delta)
