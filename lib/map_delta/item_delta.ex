@@ -1,13 +1,13 @@
-defprotocol MapDelta.PropertyDelta do
+defprotocol MapDelta.ItemDelta do
   @fallback_to_any true
   @spec compose(any, any) :: any
   def compose(first, second)
 end
 
-defimpl MapDelta.PropertyDelta, for: MapDelta do
+defimpl MapDelta.ItemDelta, for: MapDelta do
   defdelegate compose(a, b), to: MapDelta
 end
 
-defimpl MapDelta.PropertyDelta, for: Any do
+defimpl MapDelta.ItemDelta, for: Any do
   def compose(_first, second), do: second
 end

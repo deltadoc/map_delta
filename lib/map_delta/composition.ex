@@ -3,7 +3,7 @@ defmodule MapDelta.Composition do
   Map deltas composition.
   """
 
-  alias MapDelta.{Operation, Iterator, PropertyDelta}
+  alias MapDelta.{Operation, Iterator, ItemDelta}
 
   def compose(%MapDelta{ops: ops_a}, %MapDelta{ops: ops_b}) do
     ops_a
@@ -28,16 +28,16 @@ defmodule MapDelta.Composition do
   end
 
   defp do_compose([%{add: prop, init: init}, %{change: _, delta: delta}]) do
-    [Operation.add(prop, PropertyDelta.compose(init, delta))]
+    [Operation.add(prop, ItemDelta.compose(init, delta))]
   end
 
   defp do_compose([%{replace: prop, init: init}, %{change: _, delta: delta}]) do
-    [Operation.replace(prop, PropertyDelta.compose(init, delta))]
+    [Operation.replace(prop, ItemDelta.compose(init, delta))]
   end
 
   defp do_compose([%{change: prop, delta: delta_a},
                    %{change: _, delta: delta_b}]) do
-    [Operation.change(prop, PropertyDelta.compose(delta_a, delta_b))]
+    [Operation.change(prop, ItemDelta.compose(delta_a, delta_b))]
   end
 
   defp do_compose([%{remove: _} = remove, %{change: _}]) do
