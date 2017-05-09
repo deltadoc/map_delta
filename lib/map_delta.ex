@@ -5,7 +5,7 @@ defmodule MapDelta do
 
   defstruct ops: []
 
-  alias MapDelta.{Operation, Composition}
+  alias MapDelta.{Operation, Composition, Transformation}
 
   @type t :: %MapDelta{}
 
@@ -45,6 +45,8 @@ defmodule MapDelta do
   end
 
   defdelegate compose(first, second), to: Composition
+
+  defdelegate transform(left, right, priority), to: Transformation
 
   def operations(%MapDelta{ops: ops}), do: ops
 
