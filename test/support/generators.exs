@@ -55,6 +55,13 @@ defmodule MapDelta.Generators do
     end
   end
 
+  def priority_side do
+    oneof [:left, :right]
+  end
+
+  def opposite(:left), do: :right
+  def opposite(:right), do: :left
+
   defp random_string(length) do
     length
     |> :crypto.strong_rand_bytes()

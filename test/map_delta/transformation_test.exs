@@ -5,6 +5,26 @@ defmodule MapDelta.TransformationTest do
 
   import MapDelta.Generators
 
+  property "map states converge via opposite-priority transformations" do
+    forall {doc, side} <- {document(), priority_side()} do
+      forall {delta_a, delta_b} <- {delta(), delta()} do
+        delta_a_prime = MapDelta.transform(delta_b, delta_a, side)
+        delta_b_prime = MapDelta.transform(delta_a, delta_b, opposite(side))
+
+        doc_a =
+          doc
+          |> MapDelta.compose(delta_a)
+          |> MapDelta.compose(delta_b_prime)
+        doc_b =
+          doc
+          |> MapDelta.compose(delta_b)
+          |> MapDelta.compose(delta_a_prime)
+
+        ensure doc_a == doc_b
+      end
+    end
+  end
+
   describe "transform add" do
     test "against add" do
       a = MapDelta.add("a", nil)
@@ -129,6 +149,22 @@ defmodule MapDelta.TransformationTest do
       assert MapDelta.transform(b, a, :right) == a
       assert MapDelta.transform(a, b, :right) == b
       assert MapDelta.transform(b, a, :left) == b
+    end
+  end
+
+  describe "one side has not changed" do
+    test "transform nothing against add" do
+      a = MapDelta.add("a", nil)
+      b = MapDelta.new()
+      assert MapDelta.transform(a, b, :left) == b
+      assert MapDelta.transform(b, a, :right) == a
+    end
+
+    test "transform add against nothing" do
+      a = MapDelta.new()
+      b = MapDelta.add("a", nil)
+      assert MapDelta.transform(a, b, :left) == b
+      assert MapDelta.transform(b, a, :right) == a
     end
   end
 end
