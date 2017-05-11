@@ -1,6 +1,7 @@
 defmodule MapDelta.CompositionTest do
   use ExUnit.Case
   use EQC.ExUnit
+
   doctest MapDelta.Composition
 
   alias MapDelta.Operation
@@ -134,6 +135,18 @@ defmodule MapDelta.CompositionTest do
       assert MapDelta.compose(a, b) == MapDelta.new([
         Operation.add("a", 5),
         Operation.replace("b", 3)])
+    end
+
+    test "nothing with add" do
+      a = MapDelta.add("a", nil)
+      b = MapDelta.new()
+      assert MapDelta.compose(a, b) == a
+    end
+
+    test "add against nothing" do
+      a = MapDelta.new()
+      b = MapDelta.add("a", nil)
+      assert MapDelta.compose(a, b) == b
     end
 
     test "recursively" do

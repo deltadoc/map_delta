@@ -1,6 +1,7 @@
 defmodule MapDelta.TransformationTest do
   use ExUnit.Case
   use EQC.ExUnit
+
   doctest MapDelta.Composition
 
   import MapDelta.Generators
@@ -152,19 +153,35 @@ defmodule MapDelta.TransformationTest do
     end
   end
 
-  describe "one side has not changed" do
-    test "transform nothing against add" do
+  describe "transform" do
+    test "operations on different keys" do
+      a = MapDelta.add("a", 5)
+      b = MapDelta.replace("b", 3)
+      assert MapDelta.transform(a, b, :left) == b
+      assert MapDelta.transform(b, a, :right) == a
+    end
+
+    test "nothing against add" do
       a = MapDelta.add("a", nil)
       b = MapDelta.new()
       assert MapDelta.transform(a, b, :left) == b
       assert MapDelta.transform(b, a, :right) == a
     end
 
-    test "transform add against nothing" do
+    test "add against nothing" do
       a = MapDelta.new()
       b = MapDelta.add("a", nil)
       assert MapDelta.transform(a, b, :left) == b
       assert MapDelta.transform(b, a, :right) == a
+    end
+
+    test "recursively" do
+      a = MapDelta.change("a", MapDelta.add(".c", nil))
+      b = MapDelta.change("a", MapDelta.add(".c", 6))
+      assert MapDelta.transform(a, b, :left) ==
+        MapDelta.change("a", MapDelta.new())
+      assert MapDelta.transform(b, a, :right) ==
+        MapDelta.change("a", MapDelta.replace(".c", nil))
     end
   end
 end
