@@ -3,13 +3,13 @@ defmodule MapDelta.Operation do
   Map format for operations.
   """
 
-  @type property :: String.t
-  @type delta :: any
+  @type item_key :: String.t
+  @type item_delta :: any
 
-  @type add :: %{add: property, init: delta}
-  @type remove :: %{remove: property}
-  @type replace :: %{replace: property, init: delta}
-  @type change :: %{change: property, delta: delta}
+  @type add :: %{add: item_key, init: item_delta}
+  @type remove :: %{remove: item_key}
+  @type replace :: %{replace: item_key, init: item_delta}
+  @type change :: %{change: item_key, delta: item_delta}
 
   @type t :: add | remove | replace | change
 
@@ -19,10 +19,10 @@ defmodule MapDelta.Operation do
 
   def replace(prop, init), do: %{replace: prop, init: init}
 
-  def change(prop, delta), do: %{change: prop, delta: delta}
+  def change(prop, item_delta), do: %{change: prop, delta: item_delta}
 
-  def property(%{add: prop}), do: prop
-  def property(%{remove: prop}), do: prop
-  def property(%{replace: prop}), do: prop
-  def property(%{change: prop}), do: prop
+  def item_key(%{add: prop}), do: prop
+  def item_key(%{remove: prop}), do: prop
+  def item_key(%{replace: prop}), do: prop
+  def item_key(%{change: prop}), do: prop
 end

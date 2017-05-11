@@ -94,7 +94,7 @@ defmodule MapDelta.Generators do
   defp item_keys_of(doc) do
     doc
     |> MapDelta.operations()
-    |> Enum.map(&Operation.property/1)
+    |> Enum.map(&Operation.item_key/1)
   end
 
   defp random_string(length) do

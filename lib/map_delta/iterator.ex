@@ -7,34 +7,34 @@ defmodule MapDelta.Iterator do
 
   def iterate(ops_a, ops_b, fun) do
     ops_a
-    |> shared_properties(ops_b)
-    |> property_operations(ops_a, ops_b)
+    |> shared_item_keys(ops_b)
+    |> item_operations(ops_a, ops_b)
     |> Enum.map(fun)
     |> Enum.concat()
   end
 
-  defp shared_properties(ops_a, ops_b) do
+  defp shared_item_keys(ops_a, ops_b) do
     ops_a
-    |> properties()
-    |> Kernel.++(properties(ops_b))
+    |> item_keys()
+    |> Kernel.++(item_keys(ops_b))
     |> Enum.uniq()
     |> Enum.sort()
   end
 
-  defp properties(ops) do
-    Enum.map(ops, &Operation.property/1)
+  defp item_keys(ops) do
+    Enum.map(ops, &Operation.item_key/1)
   end
 
-  defp property_operations(props, ops_a, ops_b) do
-    Enum.map props, fn prop ->
-      {property_operation(ops_a, prop),
-       property_operation(ops_b, prop)}
+  defp item_operations(item_keys, ops_a, ops_b) do
+    Enum.map item_keys, fn item_key ->
+      {item_operation(ops_a, item_key),
+       item_operation(ops_b, item_key)}
     end
   end
 
-  defp property_operation(ops, prop) do
+  defp item_operation(ops, item_key) do
     ops
-    |> Enum.filter(&(Operation.property(&1) == prop))
+    |> Enum.filter(&(Operation.item_key(&1) == item_key))
     |> List.first()
   end
 end
