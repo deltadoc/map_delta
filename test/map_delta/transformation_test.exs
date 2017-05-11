@@ -7,7 +7,7 @@ defmodule MapDelta.TransformationTest do
 
   property "map states converge via opposite-priority transformations" do
     forall {doc, side} <- {document(), priority_side()} do
-      forall {delta_a, delta_b} <- {delta(), delta()} do
+      forall {delta_a, delta_b} <- {document_delta(doc), document_delta(doc)} do
         delta_a_prime = MapDelta.transform(delta_b, delta_a, side)
         delta_b_prime = MapDelta.transform(delta_a, delta_b, opposite(side))
 

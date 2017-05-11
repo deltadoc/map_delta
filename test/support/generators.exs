@@ -3,7 +3,7 @@ defmodule MapDelta.Generators do
 
   alias MapDelta.Operation
 
-  @max_property_length 25
+  @max_item_key_length 25
 
   def document do
     let adds <- list(add()) do
@@ -17,42 +17,71 @@ defmodule MapDelta.Generators do
     end
   end
 
+  def document_delta(doc) do
+    let ops <- list(operation_on(item_keys_of(doc))) do
+      MapDelta.new(ops)
+    end
+  end
+
   def operation do
     oneof [add(), remove(), replace(), change()]
   end
 
+  def operation_on(item_keys) when length(item_keys) == 0, do: add()
+  def operation_on(item_keys) do
+    oneof [add(), remove(item_keys), replace(item_keys), change(item_keys)]
+  end
+
   def add do
-    let [prop <- property(), init <- property_delta()] do
-      Operation.add(prop, init)
+    let [key <- item_key(), init <- item_delta()] do
+      Operation.add(key, init)
     end
   end
 
   def remove do
-    let prop <- property() do
-      Operation.remove(prop)
+    let key <- item_key() do
+      Operation.remove(key)
+    end
+  end
+
+  def remove(item_keys) do
+    let key <- elements(item_keys) do
+      Operation.remove(key)
     end
   end
 
   def replace do
-    let [prop <- property(), init <- property_delta()] do
-      Operation.replace(prop, init)
+    let [key <- item_key(), init <- item_delta()] do
+      Operation.replace(key, init)
+    end
+  end
+
+  def replace(item_keys) do
+    let [key <- elements(item_keys), init <- item_delta()] do
+      Operation.replace(key, init)
     end
   end
 
   def change do
-    let [prop <- property(), delta <- property_delta()] do
-      Operation.change(prop, delta)
+    let [key <- item_key(), delta <- item_delta()] do
+      Operation.change(key, delta)
     end
   end
 
-  def property_delta do
-    oneof [int(), bool(), list(int()), utf8(), nil]
+  def change(item_keys) do
+    let [key <- elements(item_keys), delta <- item_delta()] do
+      Operation.change(key, delta)
+    end
   end
 
-  def property do
-    let length <- choose(1, @max_property_length) do
+  def item_key do
+    let length <- choose(1, @max_item_key_length) do
       random_string(length)
     end
+  end
+
+  def item_delta do
+    oneof [int(), bool(), list(int()), utf8(), nil]
   end
 
   def priority_side do
@@ -61,6 +90,12 @@ defmodule MapDelta.Generators do
 
   def opposite(:left), do: :right
   def opposite(:right), do: :left
+
+  defp item_keys_of(doc) do
+    doc
+    |> MapDelta.operations()
+    |> Enum.map(&Operation.property/1)
+  end
 
   defp random_string(length) do
     length
