@@ -8,8 +8,8 @@ defprotocol MapDelta.ItemDelta do
 end
 
 defimpl MapDelta.ItemDelta, for: MapDelta do
-  defdelegate compose(a, b), to: MapDelta
-  defdelegate transform(l, r, priority), to: MapDelta
+  defdelegate compose(first, second), to: MapDelta
+  defdelegate transform(left, right, priority), to: MapDelta
 end
 
 defimpl MapDelta.ItemDelta, for: Any do
