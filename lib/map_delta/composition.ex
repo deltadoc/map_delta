@@ -7,7 +7,7 @@ defmodule MapDelta.Composition do
 
   def compose(%MapDelta{ops: ops_a}, %MapDelta{ops: ops_b}) do
     ops_a
-    |> Iterator.iterate2(ops_b, &do_compose/1)
+    |> Iterator.iterate(ops_b, &do_compose/1)
     |> wrap_into_delta()
   end
 

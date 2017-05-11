@@ -7,15 +7,6 @@ defmodule MapDelta.Iterator do
 
   def iterate(ops_a, ops_b, fun) do
     ops_a
-    |> Kernel.++(ops_b)
-    |> Enum.group_by(&Operation.property/1)
-    |> Enum.map(&elem(&1, 1))
-    |> Enum.map(fun)
-    |> Enum.concat()
-  end
-
-  def iterate2(ops_a, ops_b, fun) do
-    ops_a
     |> shared_properties(ops_b)
     |> property_operations(ops_a, ops_b)
     |> Enum.map(fun)

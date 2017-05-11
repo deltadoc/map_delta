@@ -7,7 +7,7 @@ defmodule MapDelta.Transformation do
 
   def transform(%MapDelta{ops: ops_a}, %MapDelta{ops: ops_b}, priority) do
     ops_a
-    |> Iterator.iterate2(ops_b, &do_transform(&1, priority))
+    |> Iterator.iterate(ops_b, &do_transform(&1, priority))
     |> wrap_into_delta()
   end
 
