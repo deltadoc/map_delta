@@ -5,7 +5,7 @@ defmodule MapDelta.Generators do
 
   @max_item_key_length 25
 
-  def document do
+  def state do
     let adds <- list(add()) do
       MapDelta.new(adds)
     end
@@ -17,8 +17,8 @@ defmodule MapDelta.Generators do
     end
   end
 
-  def document_delta(doc) do
-    let ops <- list(operation_on(item_keys_of(doc))) do
+  def state_delta(state) do
+    let ops <- list(operation_on(item_keys_of(state))) do
       MapDelta.new(ops)
     end
   end

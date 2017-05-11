@@ -7,21 +7,21 @@ defmodule MapDelta.TransformationTest do
   import MapDelta.Generators
 
   property "map states converge via opposite-priority transformations" do
-    forall {doc, side} <- {document(), priority_side()} do
-      forall {delta_a, delta_b} <- {document_delta(doc), document_delta(doc)} do
+    forall {map, side} <- {state(), priority_side()} do
+      forall {delta_a, delta_b} <- {state_delta(map), state_delta(map)} do
         delta_a_prime = MapDelta.transform(delta_b, delta_a, side)
         delta_b_prime = MapDelta.transform(delta_a, delta_b, opposite(side))
 
-        doc_a =
-          doc
+        map_a =
+          map
           |> MapDelta.compose(delta_a)
           |> MapDelta.compose(delta_b_prime)
-        doc_b =
-          doc
+        map_b =
+          map
           |> MapDelta.compose(delta_b)
           |> MapDelta.compose(delta_a_prime)
 
-        ensure doc_a == doc_b
+        ensure map_a == map_b
       end
     end
   end

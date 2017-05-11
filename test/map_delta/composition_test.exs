@@ -8,14 +8,14 @@ defmodule MapDelta.CompositionTest do
   import MapDelta.Generators
 
   property "(a + b) + c = a + (b + c)" do
-    forall {doc, delta_a, delta_b} <- {document(), delta(), delta()} do
-      doc_a = MapDelta.compose(doc, delta_a)
-      doc_b = MapDelta.compose(doc_a, delta_b)
+    forall {map, delta_a, delta_b} <- {state(), delta(), delta()} do
+      map_a = MapDelta.compose(map, delta_a)
+      map_b = MapDelta.compose(map_a, delta_b)
 
       delta_c = MapDelta.compose(delta_a, delta_b)
-      doc_c = MapDelta.compose(doc, delta_c)
+      map_c = MapDelta.compose(map, delta_c)
 
-      ensure doc_b == doc_c
+      ensure map_b == map_c
     end
   end
 
