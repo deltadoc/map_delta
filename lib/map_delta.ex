@@ -11,13 +11,13 @@ defmodule MapDelta do
 
   @type document :: %MapDelta{ops: [Operation.add]}
 
-  def add(prop, init), do: wrap([Operation.add(prop, init)])
+  def add(key, item_init), do: wrap([Operation.add(key, item_init)])
 
-  def remove(prop), do: wrap([Operation.remove(prop)])
+  def remove(key), do: wrap([Operation.remove(key)])
 
-  def replace(prop, init), do: wrap([Operation.replace(prop, init)])
+  def replace(key, item_init), do: wrap([Operation.replace(key, item_init)])
 
-  def change(prop, delta), do: wrap([Operation.change(prop, delta)])
+  def change(key, item_delta), do: wrap([Operation.change(key, item_delta)])
 
   def new(ops \\ [])
   def new([]), do: %MapDelta{}
@@ -28,20 +28,20 @@ defmodule MapDelta do
     |> Enum.reduce(new(), &compose(&2, &1))
   end
 
-  def add(delta, prop, init) do
-    compose(delta, add(prop, init))
+  def add(delta, key, item_init) do
+    compose(delta, add(key, item_init))
   end
 
-  def remove(delta, prop) do
-    compose(delta, remove(prop))
+  def remove(delta, key) do
+    compose(delta, remove(key))
   end
 
-  def replace(delta, prop, init) do
-    compose(delta, replace(prop, init))
+  def replace(delta, key, item_init) do
+    compose(delta, replace(key, item_init))
   end
 
-  def change(delta, prop, prop_delta) do
-    compose(delta, change(prop, prop_delta))
+  def change(delta, key, item_delta) do
+    compose(delta, change(key, item_delta))
   end
 
   defdelegate compose(first, second), to: Composition

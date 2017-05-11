@@ -27,29 +27,29 @@ defmodule MapDelta.Composition do
     []
   end
 
-  defp do_compose({%{add: prop}, %{replace: _, init: init}}) do
-    [Operation.add(prop, init)]
+  defp do_compose({%{add: key}, %{replace: _, init: init}}) do
+    [Operation.add(key, init)]
   end
 
-  defp do_compose({%{add: prop, init: init}, %{change: _, delta: delta}}) do
-    [Operation.add(prop, ItemDelta.compose(init, delta))]
+  defp do_compose({%{add: key, init: init}, %{change: _, delta: delta}}) do
+    [Operation.add(key, ItemDelta.compose(init, delta))]
   end
 
-  defp do_compose({%{replace: prop, init: init}, %{change: _, delta: delta}}) do
-    [Operation.replace(prop, ItemDelta.compose(init, delta))]
+  defp do_compose({%{replace: key, init: init}, %{change: _, delta: delta}}) do
+    [Operation.replace(key, ItemDelta.compose(init, delta))]
   end
 
-  defp do_compose({%{change: prop, delta: delta_a},
+  defp do_compose({%{change: key, delta: delta_a},
                    %{change: _, delta: delta_b}}) do
-    [Operation.change(prop, ItemDelta.compose(delta_a, delta_b))]
+    [Operation.change(key, ItemDelta.compose(delta_a, delta_b))]
   end
 
   defp do_compose({%{remove: _} = remove, %{change: _}}) do
     [remove]
   end
 
-  defp do_compose({_, %{add: prop, init: init}}) do
-    [Operation.replace(prop, init)]
+  defp do_compose({_, %{add: key, init: init}}) do
+    [Operation.replace(key, init)]
   end
 
   defp do_compose({_, %{remove: _} = remove}) do

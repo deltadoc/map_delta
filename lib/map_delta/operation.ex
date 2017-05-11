@@ -13,16 +13,16 @@ defmodule MapDelta.Operation do
 
   @type t :: add | remove | replace | change
 
-  def add(prop, init), do: %{add: prop, init: init}
+  def add(key, init), do: %{add: key, init: init}
 
-  def remove(prop), do: %{remove: prop}
+  def remove(key), do: %{remove: key}
 
-  def replace(prop, init), do: %{replace: prop, init: init}
+  def replace(key, init), do: %{replace: key, init: init}
 
-  def change(prop, item_delta), do: %{change: prop, delta: item_delta}
+  def change(key, delta), do: %{change: key, delta: delta}
 
-  def item_key(%{add: prop}), do: prop
-  def item_key(%{remove: prop}), do: prop
-  def item_key(%{replace: prop}), do: prop
-  def item_key(%{change: prop}), do: prop
+  def item_key(%{add: key}), do: key
+  def item_key(%{remove: key}), do: key
+  def item_key(%{replace: key}), do: key
+  def item_key(%{change: key}), do: key
 end

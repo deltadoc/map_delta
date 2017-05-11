@@ -128,7 +128,7 @@ defmodule MapDelta.CompositionTest do
   end
 
   describe "compose" do
-    test "operations on different properties" do
+    test "operations on different keys" do
       a = MapDelta.add("a", 5)
       b = MapDelta.replace("b", 3)
       assert MapDelta.compose(a, b) == MapDelta.new([

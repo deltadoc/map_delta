@@ -35,16 +35,16 @@ defmodule MapDelta.Transformation do
     [add]
   end
 
-  defp do_transform({%{remove: _}, %{replace: prop, init: init}}, :right) do
-    [Operation.add(prop, init)]
+  defp do_transform({%{remove: _}, %{replace: key, init: init}}, :right) do
+    [Operation.add(key, init)]
   end
 
-  defp do_transform({_, %{add: prop, init: init}}, :right) do
-    [Operation.replace(prop, init)]
+  defp do_transform({_, %{add: key, init: init}}, :right) do
+    [Operation.replace(key, init)]
   end
 
-  defp do_transform({%{change: _}, %{add: prop, init: init}}, :left) do
-    [Operation.replace(prop, init)]
+  defp do_transform({%{change: _}, %{add: key, init: init}}, :left) do
+    [Operation.replace(key, init)]
   end
 
   defp do_transform({_, %{replace: _} = replace}, :right) do
@@ -55,9 +55,9 @@ defmodule MapDelta.Transformation do
     [replace]
   end
 
-  defp do_transform({%{change: prop, delta: left},
+  defp do_transform({%{change: key, delta: left},
                      %{change: _, delta: right}}, priority) do
-    [Operation.change(prop, ItemDelta.transform(left, right, priority))]
+    [Operation.change(key, ItemDelta.transform(left, right, priority))]
   end
 
   defp do_transform({_, _}, _) do
