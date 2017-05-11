@@ -12,56 +12,56 @@ defmodule MapDelta.Transformation do
   end
 
   defp do_transform({nil, right}, _) do
-    [right]
+    right
   end
 
   defp do_transform({_, nil}, _) do
-    []
+    nil
   end
 
   defp do_transform({%{remove: _}, %{remove: _}}, :right) do
-    []
+    nil
   end
 
   defp do_transform({_, %{remove: _} = remove}, :right) do
-    [remove]
+    remove
   end
 
   defp do_transform({%{change: _}, %{remove: _} = remove}, :left) do
-    [remove]
+    remove
   end
 
   defp do_transform({%{remove: _}, %{add: _} = add}, :right) do
-    [add]
+    add
   end
 
   defp do_transform({%{remove: _}, %{replace: key, init: init}}, :right) do
-    [Operation.add(key, init)]
+    Operation.add(key, init)
   end
 
   defp do_transform({_, %{add: key, init: init}}, :right) do
-    [Operation.replace(key, init)]
+    Operation.replace(key, init)
   end
 
   defp do_transform({%{change: _}, %{add: key, init: init}}, :left) do
-    [Operation.replace(key, init)]
+    Operation.replace(key, init)
   end
 
   defp do_transform({_, %{replace: _} = replace}, :right) do
-    [replace]
+    replace
   end
 
   defp do_transform({%{change: _}, %{replace: _} = replace}, :left) do
-    [replace]
+    replace
   end
 
   defp do_transform({%{change: key, delta: left},
                      %{change: _, delta: right}}, priority) do
-    [Operation.change(key, ItemDelta.transform(left, right, priority))]
+    Operation.change(key, ItemDelta.transform(left, right, priority))
   end
 
   defp do_transform({_, _}, _) do
-    []
+    nil
   end
 
   defp wrap_into_delta(ops), do: %MapDelta{ops: ops}

@@ -10,7 +10,7 @@ defmodule MapDelta.Iterator do
     |> shared_item_keys(ops_b)
     |> item_operations(ops_a, ops_b)
     |> Enum.map(fun)
-    |> Enum.concat()
+    |> Enum.reject(&is_nil/1)
   end
 
   defp shared_item_keys(ops_a, ops_b) do
