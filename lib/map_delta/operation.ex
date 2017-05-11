@@ -72,7 +72,7 @@ defmodule MapDelta.Operation do
   @type item_delta :: any
 
   @doc """
-  Creates a new add operation.
+  Creates a new `add` operation.
 
   ## Example
 
@@ -83,7 +83,7 @@ defmodule MapDelta.Operation do
   def add(key, init), do: %{add: key, init: init}
 
   @doc """
-  Creates a new remove operation.
+  Creates a new `remove` operation.
 
   ## Example
 
@@ -94,7 +94,7 @@ defmodule MapDelta.Operation do
   def remove(key), do: %{remove: key}
 
   @doc """
-  Creates a new replace operation.
+  Creates a new `replace` operation.
 
   ## Example
 
@@ -105,7 +105,7 @@ defmodule MapDelta.Operation do
   def replace(key, init), do: %{replace: key, init: init}
 
   @doc """
-  Creates a new change operation.
+  Creates a new `change` operation.
 
   ## Example
 
