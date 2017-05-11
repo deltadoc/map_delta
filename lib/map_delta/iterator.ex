@@ -26,7 +26,7 @@ defmodule MapDelta.Iterator do
     ops_a
     |> properties()
     |> Kernel.++(properties(ops_b))
-    |> Enum.dedup()
+    |> Enum.uniq()
   end
 
   defp properties(ops) do
