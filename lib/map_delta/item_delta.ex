@@ -1,9 +1,25 @@
 defprotocol MapDelta.ItemDelta do
+  @moduledoc """
+  Item delta represents a delta of map item value.
+
+  There are only two requirements for any item delta - it should be composable
+  and transformable, same as the `MapDelta` itself.
+  """
+
   @fallback_to_any true
+
+  alias MapDelta.Transformation
+
+  @doc """
+  Composes two given item values together.
+  """
   @spec compose(any, any) :: any
   def compose(first, second)
 
-  @spec transform(any, any, :left | :right) :: any
+  @doc """
+  Transforms right value against the left one with a set priority.
+  """
+  @spec transform(any, any, Transformation.priority) :: any
   def transform(left, right, priority)
 end
 
