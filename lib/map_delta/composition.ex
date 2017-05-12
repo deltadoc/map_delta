@@ -5,9 +5,11 @@ defmodule MapDelta.Composition do
 
   alias MapDelta.{Operation, Iterator, ItemDelta}
 
-  def compose(%MapDelta{ops: ops_a}, %MapDelta{ops: ops_b}) do
-    ops_a
-    |> Iterator.iterate(ops_b, &do_compose/1)
+  def compose(first, second) do
+    {MapDelta.operations(first), MapDelta.operations(second)}
+    |> Iterator.iterate()
+    |> Enum.map(&do_compose/1)
+    |> Enum.reject(&is_nil/1)
     |> wrap_into_delta()
   end
 

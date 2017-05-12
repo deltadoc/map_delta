@@ -5,9 +5,11 @@ defmodule MapDelta.Transformation do
 
   alias MapDelta.{Operation, Iterator, ItemDelta}
 
-  def transform(%MapDelta{ops: ops_a}, %MapDelta{ops: ops_b}, priority) do
-    ops_a
-    |> Iterator.iterate(ops_b, &do_transform(&1, priority))
+  def transform(left, right, priority) do
+    {MapDelta.operations(left), MapDelta.operations(right)}
+    |> Iterator.iterate()
+    |> Enum.map(&do_transform(&1, priority))
+    |> Enum.reject(&is_nil/1)
     |> wrap_into_delta()
   end
 

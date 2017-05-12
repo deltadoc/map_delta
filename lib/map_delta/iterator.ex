@@ -5,12 +5,10 @@ defmodule MapDelta.Iterator do
 
   alias MapDelta.Operation
 
-  def iterate(ops_a, ops_b, fun) do
+  def iterate({ops_a, ops_b}) do
     ops_a
     |> shared_item_keys(ops_b)
     |> item_operations(ops_a, ops_b)
-    |> Enum.map(fun)
-    |> Enum.reject(&is_nil/1)
   end
 
   defp shared_item_keys(ops_a, ops_b) do
