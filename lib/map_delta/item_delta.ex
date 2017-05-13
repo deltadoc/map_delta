@@ -24,11 +24,24 @@ defprotocol MapDelta.ItemDelta do
 end
 
 defimpl MapDelta.ItemDelta, for: MapDelta do
+  @moduledoc """
+  Implementation of item delta for map deltas themselves.
+
+  Allows support of recusrive map transformations.
+  """
+
   defdelegate compose(first, second), to: MapDelta
   defdelegate transform(left, right, priority), to: MapDelta
 end
 
 defimpl MapDelta.ItemDelta, for: Any do
+  @moduledoc """
+  Fallback implementation of item delta for simple values.
+
+  Operates on a simple premise of non-incremental updates - new values
+  completely override previous ones.
+  """
+
   def compose(_first, second), do: second
   def transform(left, _right, :left), do: left
   def transform(_left, right, :right), do: right
