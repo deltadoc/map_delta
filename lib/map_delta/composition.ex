@@ -1,10 +1,24 @@
 defmodule MapDelta.Composition do
   @moduledoc """
-  Map deltas composition.
+  The composition of two non-concurrent delta into a single one.
+
+  The deltas are composed in such a way that the resulting delta has the same
+  effect on document state as applying one delta and then the other:
+
+    S ○ compose(Oa, Ob) = S ○ Oa ○ Ob
+
+  In more simple terms, composition allows you to take many deltas and
+  transform them into one of equal effect. When used together with Operational
+  Transformation that allows to reduce system overhead when tracking non-synced
+  changes.
   """
 
   alias MapDelta.{Operation, Operations, ItemDelta}
 
+  @doc """
+  Composes two deltas into a single equivalent one.
+  """
+  @spec compose(MapDelta.t, MapDelta.t) :: MapDelta.t
   def compose(first, second) do
     {MapDelta.operations(first), MapDelta.operations(second)}
     |> Operations.group_by_item()
