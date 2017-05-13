@@ -3,11 +3,11 @@ defmodule MapDelta.Transformation do
   Map deltas transformation.
   """
 
-  alias MapDelta.{Operation, Iterator, ItemDelta}
+  alias MapDelta.{Operation, Operations, ItemDelta}
 
   def transform(left, right, priority) do
     {MapDelta.operations(left), MapDelta.operations(right)}
-    |> Iterator.iterate()
+    |> Operations.group_by_item()
     |> Enum.map(&do_transform(&1, priority))
     |> Enum.reject(&is_nil/1)
     |> wrap_into_delta()
