@@ -1,8 +1,6 @@
-defmodule MapDelta.Operations do
+defmodule MapDelta.OperationSets do
   @moduledoc """
-  Function to operate on sets of operations.
-
-  Provides convenience logic to group sets of operations.
+  Logic to operate on sets of operations.
   """
 
   alias MapDelta.Operation
@@ -28,7 +26,7 @@ defmodule MapDelta.Operations do
   @type pairs :: [pair]
 
   @doc """
-  Groups operations from two given sets by their item keys.
+  Pairs operations from two given sets by their item keys.
 
   ## Example
 
@@ -38,13 +36,13 @@ defmodule MapDelta.Operations do
       iex> ops_b = [MapDelta.Operation.change("a", 4),
       iex>          MapDelta.Operation.replace("c", nil)]
       [%{change: "a", delta: 4}, %{replace: "c", init: nil}]
-      iex> MapDelta.Operations.group_by_item({ops_a, ops_b})
+      iex> MapDelta.OperationSets.item_pairs({ops_a, ops_b})
       [{%{add: "a", init: nil}, %{change: "a", delta: 4}},
        {%{remove: "b"}, nil},
        {nil, %{replace: "c", init: nil}}]
   """
-  @spec group_by_item(sets) :: pairs
-  def group_by_item({ops_a, ops_b}) do
+  @spec item_pairs(sets) :: pairs
+  def item_pairs({ops_a, ops_b}) do
     ops_a
     |> shared_item_keys(ops_b)
     |> item_operations(ops_a, ops_b)

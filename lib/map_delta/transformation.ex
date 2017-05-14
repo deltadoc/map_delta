@@ -20,7 +20,7 @@ defmodule MapDelta.Transformation do
   [ot2]: http://www.codecommit.com/blog/java/understanding-and-applying-operational-transformation
   """
 
-  alias MapDelta.{Operation, Operations, ItemDelta}
+  alias MapDelta.{Operation, OperationSets, ItemDelta}
 
   @typedoc """
   Atom representing transformation priority. Which delta came first?
@@ -37,7 +37,7 @@ defmodule MapDelta.Transformation do
   @spec transform(MapDelta.t, MapDelta.t, priority) :: MapDelta.t
   def transform(left, right, priority) do
     {MapDelta.operations(left), MapDelta.operations(right)}
-    |> Operations.group_by_item()
+    |> OperationSets.item_pairs()
     |> Enum.map(&do_transform(&1, priority))
     |> Enum.reject(&is_nil/1)
     |> wrap_into_delta()

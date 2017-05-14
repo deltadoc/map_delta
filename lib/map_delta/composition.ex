@@ -13,7 +13,7 @@ defmodule MapDelta.Composition do
   changes.
   """
 
-  alias MapDelta.{Operation, Operations, ItemDelta}
+  alias MapDelta.{Operation, OperationSets, ItemDelta}
 
   @doc """
   Composes two deltas into a single equivalent one.
@@ -21,7 +21,7 @@ defmodule MapDelta.Composition do
   @spec compose(MapDelta.t, MapDelta.t) :: MapDelta.t
   def compose(first, second) do
     {MapDelta.operations(first), MapDelta.operations(second)}
-    |> Operations.group_by_item()
+    |> OperationSets.item_pairs()
     |> Enum.map(&do_compose/1)
     |> Enum.reject(&is_nil/1)
     |> wrap_into_delta()
