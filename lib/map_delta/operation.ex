@@ -62,6 +62,11 @@ defmodule MapDelta.Operation do
   @type t :: add | remove | replace | change
 
   @typedoc """
+  Atom representing operation type.
+  """
+  @type type :: :add | :remove | :replace | :change
+
+  @typedoc """
   A key of an item inside a map represented via string.
   """
   @type item_key :: String.t
@@ -129,4 +134,19 @@ defmodule MapDelta.Operation do
   def item_key(%{remove: key}), do: key
   def item_key(%{replace: key}), do: key
   def item_key(%{change: key}), do: key
+
+  @doc """
+  Returns type of an operation.
+
+  ## Example
+
+      iex> MapDelta.Operation.type(%{add: "a", init: nil})
+      :add
+  """
+  @spec type(t) :: type
+  def type(op)
+  def type(%{add: _}), do: :add
+  def type(%{remove: _}), do: :remove
+  def type(%{replace: _}), do: :replace
+  def type(%{change: _}), do: :change
 end
