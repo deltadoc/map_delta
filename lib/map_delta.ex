@@ -29,7 +29,7 @@ defmodule MapDelta do
   [ot]: https://en.wikipedia.org/wiki/Operational_transformation
   """
 
-  alias MapDelta.{Operation, Composition, Transformation}
+  alias MapDelta.{Operation, Composition, Transformation, Application}
 
   defstruct ops: []
 
@@ -157,8 +157,8 @@ defmodule MapDelta do
 
   defdelegate compose(first, second), to: Composition
   defdelegate transform(left, right, priority), to: Transformation
-  defdelegate apply_to_state(delta, state), to: Composition
-  defdelegate apply_to_state!(delta, state), to: Composition
+  defdelegate apply_to_state(delta, state), to: Application
+  defdelegate apply_to_state!(delta, state), to: Application
 
   @doc """
   Returns list of operations in the given delta.
