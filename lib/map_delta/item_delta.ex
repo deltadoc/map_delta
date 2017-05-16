@@ -12,16 +12,40 @@ defprotocol MapDelta.ItemDelta do
 
   @doc """
   Composes two given item values together.
+
+  The deltas must be composed in such a way that the resulting delta has the
+  same effect on document state as applying one delta and then the other:
+
+    S ○ compose(Oa, Ob) = S ○ Oa ○ Ob
   """
   @spec compose(any, any) :: any
   def compose(first, second)
 
   @doc """
-  Transforms right value against the left one with a set priority.
+  Transforms `right` delta against the `left` one.
+
+  Transformation allows optimistic conflict resolution in concurrent editing.
+  Given a delta A that occurred at the same time as delta B against the same
+  map state, we can transform the operations of delta A such that the state of
+  the map after applying delta A and then delta B is the same as after applying
+  delta B and then the transformation of delta A against delta B:
+
+    S ○ Oa ○ transform(Ob, Oa) = S ○ Ob ○ transform(Oa, Ob)
+
+  The function also takes a third `t:MapDelta.Transformation.priority/0`
+  argument that indicates which delta came first. This is important when
+  resolving conflicts.
   """
   @spec transform(any, any, Transformation.priority) :: any
   def transform(left, right, priority)
 
+  @doc """
+  Applies given delta to a particular map state, resulting in a new state.
+
+  Map state is a set of `add` operations. If composing state with delta results
+  in anything but a set of `add` operations, `:error` tuple is returned instead.
+  """
+  @spec apply_to_state(any, any) :: Composition.state_application_result
   def apply_to_state(delta, state)
 end
 
