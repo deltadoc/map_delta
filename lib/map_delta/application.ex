@@ -17,12 +17,12 @@ defmodule MapDelta.Application do
   @typedoc """
   Specifies path at which error happened.
   """
-  @type path :: [String.t]
+  @type item_path :: [String.t]
 
   @typedoc """
   An atom representing reason for an application error.
   """
-  @type reason :: atom
+  @type error_reason :: atom
 
   @typedoc """
   Result of `&MapDelta.appy/2` operation.
@@ -30,7 +30,7 @@ defmodule MapDelta.Application do
   Either a successful new state or an error with a clear reason.
   """
   @type result :: {:ok, MapDelta.state}
-                | {:error, {path, reason}}
+                | {:error, {item_path, error_reason}}
 
   @doc """
   Applies given delta to a particular map state, resulting in a new state.

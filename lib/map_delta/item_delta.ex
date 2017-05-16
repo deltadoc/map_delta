@@ -10,6 +10,15 @@ defprotocol MapDelta.ItemDelta do
 
   alias MapDelta.{Transformation, Application}
 
+  @typedoc """
+  Result of `&MapDelta.appy/2` operation.
+
+  Either a successful new state or an error with a clear reason.
+  """
+  @type application_result :: {:ok, any}
+                            | {:error, {Application.item_path,
+                                        Application.error_reason}}
+
   @doc """
   Composes two given item values together.
 
@@ -45,7 +54,7 @@ defprotocol MapDelta.ItemDelta do
   Map state is a set of `add` operations. If composing state with delta results
   in anything but a set of `add` operations, `:error` tuple is returned instead.
   """
-  @spec apply(any, any) :: Application.result
+  @spec apply(any, any) :: application_result
   def apply(state, delta)
 end
 
