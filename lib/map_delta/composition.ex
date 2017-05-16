@@ -1,6 +1,6 @@
 defmodule MapDelta.Composition do
   @moduledoc """
-  The composition of two non-concurrent delta into a single one.
+  The composition of two non-concurrent deltas into a single one.
 
   The deltas are composed in such a way that the resulting delta has the same
   effect on document state as applying one delta and then the other:
