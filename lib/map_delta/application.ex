@@ -25,7 +25,7 @@ defmodule MapDelta.Application do
   @type reason :: atom
 
   @typedoc """
-  Result of `&MapDelta.apply_to_state/2` operation.
+  Result of `&MapDelta.appy/2` operation.
 
   Either a successful new state or an error with a clear reason.
   """
@@ -42,11 +42,11 @@ defmodule MapDelta.Application do
 
       iex> state = MapDelta.add("a", nil)
       %MapDelta{ops: [%{add: "a", init: nil}]}
-      iex> MapDelta.apply_to_state(MapDelta.change("a", 5), state)
+      iex> MapDelta.apply(state, MapDelta.change("a", 5))
       {:ok, %MapDelta{ops: [%{add: "a", init: 5}]}}
   """
-  @spec apply_to_state(MapDelta.t, MapDelta.state) :: result
-  def apply_to_state(delta, state) do
+  @spec apply(MapDelta.state, MapDelta.t) :: result
+  def apply(state, delta) do
     result =
       {MapDelta.operations(state), MapDelta.operations(delta)}
       |> OperationSets.item_pairs()
@@ -62,16 +62,18 @@ defmodule MapDelta.Application do
   @doc """
   Applies given delta to a particular map state, resulting in a new state.
 
-  Equivalent to `&MapDelta.apply_to_state/2`, but raises an exception on failed
+  Equivalent to `&MapDelta.apply/2`, but raises an exception on failed
   composition.
   """
-  @spec apply_to_state!(MapDelta.t, MapDelta.state) :: MapDelta.state
-  def apply_to_state!(delta, state) do
-    case apply_to_state(delta, state) do
+  @spec apply!(MapDelta.state, MapDelta.t) :: MapDelta.state
+  def apply!(state, delta) do
+    case __MODULE__.apply(state, delta) do
       {:ok, new_state} ->
         new_state
-      {:error, {_path, _reason}} ->
-        raise "Application resulted in a bad state"
+      {:error, {path, reason}} ->
+        path_string = Enum.join(path, ".")
+        reason_string = Atom.to_string(reason)
+        raise "Can not apply change to `#{path_string}`: #{reason_string}"
     end
   end
 
@@ -93,7 +95,7 @@ defmodule MapDelta.Application do
   end
 
   defp do_compose({%{add: key, init: init}, %{change: _, delta: delta}}, ops) do
-    case ItemDelta.apply_to_state(delta, init) do
+    case ItemDelta.apply(init, delta) do
       {:ok, new_delta} ->
         add = Operation.add(key, new_delta)
         {:cont, ops ++ [add]}

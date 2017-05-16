@@ -157,8 +157,8 @@ defmodule MapDelta do
 
   defdelegate compose(first, second), to: Composition
   defdelegate transform(left, right, priority), to: Transformation
-  defdelegate apply_to_state(delta, state), to: Application
-  defdelegate apply_to_state!(delta, state), to: Application
+  defdelegate apply(state, delta), to: Application
+  defdelegate apply!(state, delta), to: Application
 
   @doc """
   Returns list of operations in the given delta.

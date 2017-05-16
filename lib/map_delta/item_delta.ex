@@ -8,7 +8,7 @@ defprotocol MapDelta.ItemDelta do
 
   @fallback_to_any true
 
-  alias MapDelta.Transformation
+  alias MapDelta.{Transformation, Application}
 
   @doc """
   Composes two given item values together.
@@ -45,8 +45,8 @@ defprotocol MapDelta.ItemDelta do
   Map state is a set of `add` operations. If composing state with delta results
   in anything but a set of `add` operations, `:error` tuple is returned instead.
   """
-  @spec apply_to_state(any, any) :: Composition.state_application_result
-  def apply_to_state(delta, state)
+  @spec apply(any, any) :: Application.result
+  def apply(state, delta)
 end
 
 defimpl MapDelta.ItemDelta, for: MapDelta do
@@ -58,7 +58,7 @@ defimpl MapDelta.ItemDelta, for: MapDelta do
 
   defdelegate compose(first, second), to: MapDelta
   defdelegate transform(left, right, priority), to: MapDelta
-  defdelegate apply_to_state(delta, state), to: MapDelta
+  defdelegate apply(state, delta), to: MapDelta
 end
 
 defimpl MapDelta.ItemDelta, for: Any do
@@ -72,5 +72,5 @@ defimpl MapDelta.ItemDelta, for: Any do
   def compose(_first, second), do: second
   def transform(left, _right, :left), do: left
   def transform(_left, right, :right), do: right
-  def apply_to_state(delta, _), do: {:ok, delta}
+  def apply(_, delta), do: {:ok, delta}
 end
