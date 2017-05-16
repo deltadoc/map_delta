@@ -44,6 +44,8 @@ defmodule MapDelta.Application do
       %MapDelta{ops: [%{add: "a", init: nil}]}
       iex> MapDelta.apply(state, MapDelta.change("a", 5))
       {:ok, %MapDelta{ops: [%{add: "a", init: 5}]}}
+      iex> MapDelta.apply(state, MapDelta.remove("b"))
+      {:error, {["b"], :item_not_found}}
   """
   @spec apply(MapDelta.state, MapDelta.t) :: result
   def apply(state, delta) do

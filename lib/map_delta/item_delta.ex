@@ -53,6 +53,10 @@ defprotocol MapDelta.ItemDelta do
 
   Map state is a set of `add` operations. If composing state with delta results
   in anything but a set of `add` operations, `:error` tuple is returned instead.
+
+  Apply must return either `:ok` tuple with a new state or an `:error` tuple
+  with `t:MapDelta.Application.item_path/0` and
+  `t:MapDelta.Application.error_reason/0`.
   """
   @spec apply(any, any) :: application_result
   def apply(state, delta)
