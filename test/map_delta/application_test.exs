@@ -77,7 +77,9 @@ defmodule MapDelta.ApplicationTest do
     test "a force, by changing inexistent field" do
       state = MapDelta.new()
       delta = MapDelta.change("a", 5)
+      assert_raise RuntimeError, fn ->
         MapDelta.apply!(state, delta)
+      end
     end
   end
 end
