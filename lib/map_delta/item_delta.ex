@@ -21,6 +21,8 @@ defprotocol MapDelta.ItemDelta do
   """
   @spec transform(any, any, Transformation.priority) :: any
   def transform(left, right, priority)
+
+  def apply_to_state(delta, state)
 end
 
 defimpl MapDelta.ItemDelta, for: MapDelta do
@@ -32,6 +34,7 @@ defimpl MapDelta.ItemDelta, for: MapDelta do
 
   defdelegate compose(first, second), to: MapDelta
   defdelegate transform(left, right, priority), to: MapDelta
+  defdelegate apply_to_state(delta, state), to: MapDelta
 end
 
 defimpl MapDelta.ItemDelta, for: Any do
@@ -45,4 +48,5 @@ defimpl MapDelta.ItemDelta, for: Any do
   def compose(_first, second), do: second
   def transform(left, _right, :left), do: left
   def transform(_left, right, :right), do: right
+  def apply_to_state(delta, _), do: {:ok, delta}
 end

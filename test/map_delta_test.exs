@@ -79,13 +79,22 @@ defmodule MapDeltaTest do
     test "by attempting to change inexistent field" do
       state = MapDelta.new()
       delta = MapDelta.change("a", 5)
-      assert MapDelta.apply_to_state(delta, state) == {:error, :bad_state}
+      assert MapDelta.apply_to_state(delta, state) ==
+        {:error, {["a"], :item_not_found}}
     end
 
     test "by attempting to remove inexistent field" do
       state = MapDelta.new()
-      delta = MapDelta.remove("a")
-      assert MapDelta.apply_to_state(delta, state) == {:error, :bad_state}
+      delta = MapDelta.remove("b")
+      assert MapDelta.apply_to_state(delta, state) ==
+        {:error, {["b"], :item_not_found}}
+    end
+
+    test "by attempting to remove deep inexistent field" do
+      state = MapDelta.add("a", MapDelta.new())
+      delta = MapDelta.change("a", MapDelta.remove("b"))
+      assert MapDelta.apply_to_state(delta, state) ==
+        {:error, {["a", "b"], :item_not_found}}
     end
 
     test "with a force, by changing a field" do

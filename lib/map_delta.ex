@@ -155,46 +155,10 @@ defmodule MapDelta do
     compose(delta, wrap(Operation.change(item_key, item_delta)))
   end
 
-  @doc """
-  Applies given delta to a particular map state, resulting in a new state.
-
-  Map state is a set of `add` operations. If composing state with delta results
-  in anything but a set of `add` operations, `:error` tuple is returned instead.
-
-  ## Examples
-
-      iex> state = MapDelta.add("a", nil)
-      %MapDelta{ops: [%{add: "a", init: nil}]}
-      iex> MapDelta.apply_to_state(MapDelta.change("a", 5), state)
-      {:ok, %MapDelta{ops: [%{add: "a", init: 5}]}}
-  """
-  @spec apply_to_state(t, state) :: {:ok, state} | {:error, atom}
-  def apply_to_state(delta, state) do
-    new_state = compose(state, delta)
-    case has_only_add_operations?(new_state) do
-      true -> {:ok, new_state}
-      false -> {:error, :bad_state}
-    end
-  end
-
-  @doc """
-  Applies given delta to a particular map state, resulting in a new state.
-
-  Equivalent to `&MapDelta.apply_to_state/2`, but raises an exception on failed
-  composition.
-  """
-  @spec apply_to_state!(t, state) :: state
-  def apply_to_state!(delta, state) do
-    case apply_to_state(delta, state) do
-      {:ok, new_state} ->
-        new_state
-      {:error, :bad_state} ->
-        raise "Application resulted in a bad state"
-    end
-  end
-
   defdelegate compose(first, second), to: Composition
   defdelegate transform(left, right, priority), to: Transformation
+  defdelegate apply_to_state(delta, state), to: Composition
+  defdelegate apply_to_state!(delta, state), to: Composition
 
   @doc """
   Returns list of operations in the given delta.
@@ -212,11 +176,4 @@ defmodule MapDelta do
   def operations(delta), do: delta.ops
 
   defp wrap(ops), do: %MapDelta{ops: List.wrap(ops)}
-
-  defp has_only_add_operations?(delta) do
-    delta.ops
-    |> Enum.filter(&(Operation.type(&1) != :add))
-    |> Enum.count()
-    |> Kernel.==(0)
-  end
 end
