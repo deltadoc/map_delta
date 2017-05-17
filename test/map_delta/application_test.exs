@@ -8,7 +8,7 @@ defmodule MapDelta.ApplicationTest do
   import MapDelta.Generators
 
   property "state modifications always result in a proper state" do
-    forall state <- non_empty(state()) do
+    forall state <- state() do
       forall delta <- state_delta(state) do
         new_state = MapDelta.apply!(state, delta)
         operation_types =
