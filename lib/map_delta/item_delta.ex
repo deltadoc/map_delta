@@ -85,5 +85,5 @@ defimpl MapDelta.ItemDelta, for: Any do
   def compose(_first, second), do: second
   def transform(left, _right, :left), do: left
   def transform(_left, right, :right), do: right
-  def apply(_, delta), do: {:ok, delta}
+  def apply(_state, delta), do: {:ok, delta}
 end
