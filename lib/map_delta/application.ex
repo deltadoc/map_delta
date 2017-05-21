@@ -61,13 +61,15 @@ defmodule MapDelta.Application do
     end
   end
 
+  alias MapDelta
+
   @doc """
   Applies given delta to a particular map state, resulting in a new state.
 
   Equivalent to `&MapDelta.apply/2`, but raises an exception on failed
   application.
   """
-  @spec apply!(MapDelta.state, MapDelta.t) :: MapDelta.state
+  @spec apply!(MapDelta.state, MapDelta.t) :: MapDelta.state | no_return
   def apply!(state, delta) do
     case __MODULE__.apply(state, delta) do
       {:ok, new_state} ->

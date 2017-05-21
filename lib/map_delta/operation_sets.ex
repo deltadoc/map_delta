@@ -13,7 +13,7 @@ defmodule MapDelta.OperationSets do
   @typedoc """
   Pair of operation sets.
   """
-  @type sets :: {set, sets}
+  @type sets :: {set, set}
 
   @typedoc """
   Pair of operations.
