@@ -1,15 +1,14 @@
 defmodule MapDelta.Application do
   @moduledoc """
-  The application allows to modify a given map `t:MapDelta.state/0` with a given
-  `t:MapDelta.t/0`.
+  Application of a map delta to a map state, resulting in a new state.
 
   Map state is represented as a set of `t:MapDelta.Operation.add/0` operations.
-  By this token, applying delta to a state should still result in a set of `add`
-  operations. If application returns anything but a set of `add` operatins, this
-  is conisdered and error.
+  By this token, applying delta to a state must always result in a set of `add`
+  operations. If application results in anything but a set of `add` operatins,
+  this is conisdered an error.
 
   In simpler terms, you would not be able to remove, change or replace items
-  that weren't first added to the state.
+  that weren't been first added to the map.
   """
 
   alias MapDelta.{Operation, OperationSets, ItemDelta}
@@ -20,14 +19,15 @@ defmodule MapDelta.Application do
   @type item_path :: [String.t]
 
   @typedoc """
-  An atom representing reason for an application error.
+  A reason for an application error.
   """
-  @type error_reason :: atom
+  @type error_reason :: :item_not_found
 
   @typedoc """
-  Result of `&MapDelta.appy/2` operation.
+  Result of an application.
 
-  Either a successful new state or an error with a clear reason.
+  Either an `:ok` tupple with a new `t:MapDelta.state/0` or an `:error` tupple
+  with a `t:MapDelta.Application.error_reason/0`.
   """
   @type result :: {:ok, MapDelta.state}
                 | {:error, {item_path, error_reason}}
@@ -52,7 +52,7 @@ defmodule MapDelta.Application do
     result =
       {MapDelta.operations(state), MapDelta.operations(delta)}
       |> OperationSets.item_pairs()
-      |> Enum.reduce_while([], &do_compose/2)
+      |> Enum.reduce_while([], &do_apply/2)
     case result do
       {:error, error} ->
         {:error, error}
@@ -65,7 +65,7 @@ defmodule MapDelta.Application do
   Applies given delta to a particular map state, resulting in a new state.
 
   Equivalent to `&MapDelta.apply/2`, but raises an exception on failed
-  composition.
+  application.
   """
   @spec apply!(MapDelta.state, MapDelta.t) :: MapDelta.state
   def apply!(state, delta) do
@@ -79,24 +79,24 @@ defmodule MapDelta.Application do
     end
   end
 
-  defp do_compose({%{add: _} = add, nil}, ops) do
+  defp do_apply({%{add: _} = add, nil}, ops) do
     {:cont, ops ++ [add]}
   end
 
-  defp do_compose({_, %{add: _} = add}, ops) do
+  defp do_apply({_, %{add: _} = add}, ops) do
     {:cont, ops ++ [add]}
   end
 
-  defp do_compose({%{add: _}, %{remove: _}}, ops) do
+  defp do_apply({%{add: _}, %{remove: _}}, ops) do
     {:cont, ops}
   end
 
-  defp do_compose({%{add: key}, %{replace: _, init: init}}, ops) do
+  defp do_apply({%{add: key}, %{replace: _, init: init}}, ops) do
     add = Operation.add(key, init)
     {:cont, ops ++ [add]}
   end
 
-  defp do_compose({%{add: key, init: init}, %{change: _, delta: delta}}, ops) do
+  defp do_apply({%{add: key, init: init}, %{change: _, delta: delta}}, ops) do
     case ItemDelta.apply(init, delta) do
       {:ok, new_delta} ->
         add = Operation.add(key, new_delta)
@@ -106,12 +106,12 @@ defmodule MapDelta.Application do
     end
   end
 
-  defp do_compose({%{} = op_a, _}, _) do
+  defp do_apply({%{} = op_a, _}, _) do
     key = Operation.item_key(op_a)
     {:halt, {:error, {[key], :item_not_found}}}
   end
 
-  defp do_compose({_, %{} = op_b}, _) do
+  defp do_apply({_, %{} = op_b}, _) do
     key = Operation.item_key(op_b)
     {:halt, {:error, {[key], :item_not_found}}}
   end

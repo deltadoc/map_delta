@@ -2,15 +2,16 @@ defmodule MapDelta do
   @moduledoc """
   Map delta is a format used to describe map states and changes.
 
-  At the low level map delta is simply an array of `t:MapDelta.Operation.t/0`.
-  Each operation contains an `t:MapDelta.Operation.item_key/0` and delta insures
-  that it represents the shortest path to an end state through composition.
-  Enforced composition means there's always only one operation per a single item
-  key.
+  At the low level map delta is simply a set of `t:MapDelta.Operation.t/0
+  operations.  Each operation contains an `t:MapDelta.Operation.item_key/0` and
+  a state transition. Delta insures that it represents the shortest path to an
+  end state via composition, which is enforced. Enforced composition means
+  there's always only one operation (`add`, `change`, `replace` or `remove`) per
+  a single item key.
 
-  Map delta can describe both map changes and maps themselves. We can think of a
-  final map state as an artefact of all the item additions to it. This way final
-  state of a map is represented simply as an array of `add` operations.
+  Map delta can describe both map changes and map end states. We can think of a
+  map state as an artefact of all the item additions to it. This way state of a
+  map is simply a set of `t:MapDelta.Operation.add/0` operations.
 
   Map deltas are also transformable. This attribute of deltas is what enables
   [Operational Transformation][ot] - a way to transform one operation against
@@ -44,19 +45,19 @@ defmodule MapDelta do
   @type state :: %MapDelta{ops: [Operation.add]}
 
   @doc """
-  Creates new map delta.
+  Creates a new map delta.
 
   ## Examples
 
       iex> MapDelta.new()
       %MapDelta{}
 
-  You can also pass set of operations using optional argument:
+  You can also pass an existing set of operations using optional argument:
 
       iex> MapDelta.new([MapDelta.Operation.add("a", 5)])
       %MapDelta{ops: [%{add: "a", init: 5}]}
 
-  Given operations will be compacted/composed appropriately:
+  Given operations will be compacted appropriately:
 
       iex> MapDelta.new([MapDelta.Operation.add("a", 5),
       iex>               MapDelta.Operation.change("a", 3)])
