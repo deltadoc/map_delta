@@ -51,21 +51,21 @@ defmodule MapDelta.ApplicationTest do
       state = MapDelta.new()
       delta = MapDelta.change("a", 5)
       assert MapDelta.apply(state, delta) ==
-        {:error, ["a"], :not_found}
+        {:error, ["a"], :item_not_found}
     end
 
     test "attempting to remove inexistent field" do
       state = MapDelta.new()
       delta = MapDelta.remove("b")
       assert MapDelta.apply(state, delta) ==
-        {:error, ["b"], :not_found}
+        {:error, ["b"], :item_not_found}
     end
 
     test "attempting to remove deep inexistent field" do
       state = MapDelta.add("a", MapDelta.new())
       delta = MapDelta.change("a", MapDelta.remove("b"))
       assert MapDelta.apply(state, delta) ==
-        {:error, ["a", "b"], :not_found}
+        {:error, ["a", "b"], :item_not_found}
     end
 
     test "a force, by changing a field" do

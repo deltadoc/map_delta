@@ -21,7 +21,7 @@ defmodule MapDelta.Application do
   @typedoc """
   A reason for an application error.
   """
-  @type error_reason :: :not_found
+  @type error_reason :: :item_not_found
 
   @typedoc """
   Result of an application.
@@ -46,7 +46,7 @@ defmodule MapDelta.Application do
       iex> MapDelta.apply(state, MapDelta.change("a", 5))
       {:ok, %MapDelta{ops: [%{add: "a", init: 5}]}}
       iex> MapDelta.apply(state, MapDelta.remove("b"))
-      {:error, ["b"], :not_found}
+      {:error, ["b"], :item_not_found}
   """
   @spec apply(MapDelta.state, MapDelta.t) :: result
   def apply(state, delta) do
@@ -111,11 +111,11 @@ defmodule MapDelta.Application do
 
   defp do_apply({%{} = op_a, _}, _) do
     key = Operation.item_key(op_a)
-    {:halt, {:error, [key], :not_found}}
+    {:halt, {:error, [key], :item_not_found}}
   end
 
   defp do_apply({_, %{} = op_b}, _) do
     key = Operation.item_key(op_b)
-    {:halt, {:error, [key], :not_found}}
+    {:halt, {:error, [key], :item_not_found}}
   end
 end
