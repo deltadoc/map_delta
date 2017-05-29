@@ -21,16 +21,17 @@ defmodule MapDelta.Application do
   @typedoc """
   A reason for an application error.
   """
-  @type error_reason :: :item_not_found
+  @type error_reason :: :not_found
 
   @typedoc """
   Result of an application.
 
   Either an `:ok` tupple with a new `t:MapDelta.state/0` or an `:error` tupple
-  with a `t:MapDelta.Application.error_reason/0`.
+  with a `t:MapDelta.Application.error_reason/0` as well as
+  `t:MapDelta.Application.item_path/0`.
   """
   @type result :: {:ok, MapDelta.state}
-                | {:error, {item_path, error_reason}}
+                | {:error, item_path, error_reason}
 
   @doc """
   Applies given delta to a particular map state, resulting in a new state.
@@ -45,7 +46,7 @@ defmodule MapDelta.Application do
       iex> MapDelta.apply(state, MapDelta.change("a", 5))
       {:ok, %MapDelta{ops: [%{add: "a", init: 5}]}}
       iex> MapDelta.apply(state, MapDelta.remove("b"))
-      {:error, {["b"], :item_not_found}}
+      {:error, ["b"], :not_found}
   """
   @spec apply(MapDelta.state, MapDelta.t) :: result
   def apply(state, delta) do
@@ -54,8 +55,8 @@ defmodule MapDelta.Application do
       |> OperationSets.item_pairs()
       |> Enum.reduce_while([], &do_apply/2)
     case result do
-      {:error, error} ->
-        {:error, error}
+      {:error, path, reason} ->
+        {:error, path, reason}
       ops ->
         {:ok, %MapDelta{ops: ops}}
     end
@@ -74,10 +75,10 @@ defmodule MapDelta.Application do
     case __MODULE__.apply(state, delta) do
       {:ok, new_state} ->
         new_state
-      {:error, {path, reason}} ->
+      {:error, path, reason} ->
         path_string = Enum.join(path, ".")
         reason_string = Atom.to_string(reason)
-        raise "Can not apply change to `#{path_string}`: #{reason_string}"
+        raise "Map application error (`#{path_string}`: #{reason_string})"
     end
   end
 
@@ -103,18 +104,18 @@ defmodule MapDelta.Application do
       {:ok, new_delta} ->
         add = Operation.add(key, new_delta)
         {:cont, ops ++ [add]}
-      {:error, {path, reason}} ->
-        {:halt, {:error, {[key | path], reason}}}
+      {:error, path, reason} ->
+        {:halt, {:error, [key | path], reason}}
     end
   end
 
   defp do_apply({%{} = op_a, _}, _) do
     key = Operation.item_key(op_a)
-    {:halt, {:error, {[key], :item_not_found}}}
+    {:halt, {:error, [key], :not_found}}
   end
 
   defp do_apply({_, %{} = op_b}, _) do
     key = Operation.item_key(op_b)
-    {:halt, {:error, {[key], :item_not_found}}}
+    {:halt, {:error, [key], :not_found}}
   end
 end

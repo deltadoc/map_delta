@@ -3,11 +3,11 @@ defprotocol MapDelta.ItemDelta do
   Item delta represents a delta of map item value.
 
   There are three requirements for any item delta:
-  
+
   1. It must be composable.
   2. It must be transformable.
   3. It must be applicable.
-  
+
   These requirements are outlines in this protocol, which must be implemented
   for any new value type you want maps to support.
   """
@@ -22,7 +22,7 @@ defprotocol MapDelta.ItemDelta do
   Either a successful new state or an error with a clear reason.
   """
   @type application_result :: {:ok, any}
-                            | {:error, {Application.item_path, atom}}
+                            | {:error, Application.item_path, atom}
 
   @doc """
   Composes two given item values together.
