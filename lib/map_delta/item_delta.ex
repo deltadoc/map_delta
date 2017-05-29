@@ -22,8 +22,7 @@ defprotocol MapDelta.ItemDelta do
   Either a successful new state or an error with a clear reason.
   """
   @type application_result :: {:ok, any}
-                            | {:error, {Application.item_path,
-                                        Application.error_reason}}
+                            | {:error, {Application.item_path, atom}}
 
   @doc """
   Composes two given item values together.
