@@ -2,8 +2,14 @@ defprotocol MapDelta.ItemDelta do
   @moduledoc """
   Item delta represents a delta of map item value.
 
-  There are only two requirements for any item delta - it should be composable
-  and transformable, same as the `MapDelta` itself.
+  There are three requirements for any item delta:
+  
+  1. It must be composable.
+  2. It must be transformable.
+  3. It must be applicable.
+  
+  These requirements are outlines in this protocol, which must be implemented
+  for any new value type you want maps to support.
   """
 
   @fallback_to_any true
