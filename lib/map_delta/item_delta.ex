@@ -54,10 +54,11 @@ defprotocol MapDelta.ItemDelta do
   def transform(left, right, priority)
 
   @doc """
-  Applies given delta to a particular map state, resulting in a new state.
+  Applies given delta to a particular item state, resulting in a new state.
 
-  Map state is a set of `add` operations. If composing state with delta results
-  in anything but a set of `add` operations, `:error` tuple is returned instead.
+  Each type of item should define for itself what valid state is, but all of
+  them must ensure that if application results in invalid state, `:error`
+  tuple must be returned instead.
 
   Apply must return either `:ok` tuple with a new state or an `:error` tuple
   with `t:MapDelta.Application.item_path/0` and
